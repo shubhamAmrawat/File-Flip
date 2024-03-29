@@ -417,9 +417,11 @@ nav {
   .individual-cards {
     flex: 0 0 95%; /* One card per row */
     
+    
   }
   .cards-layout{
-    padding: 2rem;
+  
+    padding: 5rem;
   }
 
   /* ... Font-size adjustments from the previous answer ... */ 
