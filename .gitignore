@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build files
+client/.next/
+client/dist/
+server/dist/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+client/.env
+server/.env
+
+# Cache & misc
+.cache/
+.DS_Store
+.vscode/
+.idea/
