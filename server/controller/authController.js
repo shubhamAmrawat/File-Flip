@@ -2,6 +2,7 @@ import userModel from "../models/userModel.js";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import transporter from "../config/nodemailer.js";
+import { text } from "express";
 
 export const register = async (req, res) => {
   try {
@@ -79,4 +80,152 @@ export const register = async (req, res) => {
     return res.json({ success: false, message: `Error in register controller : ${error.message}` })
   }
 
+}
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) return res.json({ success: false, message: `Missing credentials` });
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) return res.json({ success: false, message: `Account not Found` });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) return res.json({ success: false, message: `Invalid  credentials` });
+
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '7d' });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.ENVIRONMENT === 'PRODUCTION',
+      sameSite: process.env.ENVIRONMENT === 'PRODUCTION' ? 'none' : 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
+    return res.json({ success: true, message: "Login Successful" });
+
+  } catch (error) {
+    return res.json({ success: false, message: `Error in login controller ${error.message}` })
+  }
+}
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.ENVIRONMENT === 'PRODUCTION',
+    })
+    return res.json({ success: true, message: "Logged out Successfully" });
+
+  } catch (error) {
+    return res.json({ success: false, message: `Error in Logout controller ${error.message}` });
+  }
+}
+
+export const sendEmailVerificationOtp = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (user.isAccountVerified) return res.json({ success: false, message: `Account already verified` });
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000))
+    user.verifyOtp = otp;
+    user.verifyOtpExpiryTime = Date.now() + 24 * 60 * 60 * 1000;
+
+    await user.save();
+
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: "🔐 Your OTP for Verification",
+      text: `Hello ${user.name}, here is your OTP: ${otp}`,
+      html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; background-color: #ffffff;">
+      <div style="text-align: center;">
+        <h2 style="color: #3f51b5;">Your One-Time Password (OTP)</h2>
+      </div>
+      <p style="font-size: 16px; color: #333;">Hello <strong>${user.name}</strong>,</p>
+      <p style="font-size: 16px; color: #333;">
+        Please use the following OTP to complete your verification process:
+      </p>
+      <div style="text-align: center; margin: 30px 0;">
+        <span style="display: inline-block; font-size: 24px; font-weight: bold; background-color: #f0f4ff; color: #3f51b5; padding: 12px 24px; border-radius: 8px; letter-spacing: 2px;">
+          ${otp}
+        </span>
+      </div>
+      <p style="font-size: 14px; color: #777;">This OTP is valid for the next 10 minutes. Please do not share it with anyone.</p>
+      <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
+      <p style="font-size: 14px; color: #777;">If you did not request this OTP, please ignore this email or contact support.</p>
+      <p style="font-size: 14px; color: #777;">Thank you, <br/>The Team</p>
+    </div>
+  `
+    };
+
+    await transporter.sendMail(mailOption);
+
+    return res.json({ success: true, message: "Verification otp send on the Email" });
+
+
+  } catch (error) {
+    return res.json({ success: false, message: `Error in sendverification controller: ${error.message}` });
+  }
+}
+
+export const verifyEmailOtp = async (req, res) => {
+  try {
+
+    const { userId, otp } = req.body;
+
+    if (!userId || !otp) return res.json({ success: false, message: `Missing Details` });
+
+    const user = await userModel.findById(userId);
+
+    if (!user) return res.json({ success: false, message: `User missing` });
+
+    if (user.verifyOtp === '' || user.verifyOtp !== otp) {
+      return res.json({ success: false, message: `Invalid OTP ` });
+    }
+
+    if (user.verifyOtpExpiryTime < Date.now) {
+      return res.json({ success: false, message: `Expired OTP ` });
+    }
+
+    user.isAccountVerified = true;
+    user.verifyOtp = '',
+    user.verifyOtpExpiryTime = 0;
+    
+    await user.save(); 
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: "✅ Email Verified Successfully",
+      text: `Hello ${user.name}, your email account has been verified successfully.`,
+      html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; background-color: #ffffff;">
+      <div style="text-align: center;">
+        <h2 style="color: #4CAF50;">Email Verified Successfully!</h2>
+      </div>
+      <p style="font-size: 16px; color: #333;">Hello <strong>${user.name}</strong>,</p>
+      <p style="font-size: 16px; color: #333;">
+        We are happy to inform you that your email account has been <strong style="color: #4CAF50;">successfully verified</strong>. You can now enjoy all the features of our service without any interruption.
+      </p>
+      <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
+      <p style="font-size: 14px; color: #777;">If you did not request this verification, please contact our support team immediately.</p>
+      <p style="font-size: 14px; color: #777;">Thank you, <br/>The Team</p>
+    </div>
+  `
+    };
+
+
+    await transporter.sendMail(mailOption); 
+
+    return res.json({ success: true, message: "Email verified successfully" });
+  } catch (error) {
+    return res.json({ success: false, message: `Error in  verifyEmailOtp Controller: ${error.message}` });
+  }
 }
