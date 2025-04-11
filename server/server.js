@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import cookieParser from "cookie-parser";
 import connectDb from "./config/mongoDb.js";
+import authRouter from "./router/authRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5100;
@@ -19,6 +20,7 @@ app.use(cors({
 app.get('/', (req, res) => {
   res.send("FILE FLIP INITIALL");
 })
+app.use('/api/auth/', authRouter)
 
 
 app.listen(port, () => {
