@@ -1,4 +1,4 @@
-import userModel from "../models/userModel.js";
+import userModel from "../models/usermodel.js";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import transporter from "../config/nodemailer.js";
@@ -197,9 +197,9 @@ export const verifyEmailOtp = async (req, res) => {
 
     user.isAccountVerified = true;
     user.verifyOtp = '',
-    user.verifyOtpExpiryTime = 0;
-    
-    await user.save(); 
+      user.verifyOtpExpiryTime = 0;
+
+    await user.save();
     const mailOption = {
       from: process.env.SENDER_EMAIL,
       to: user.email,
@@ -222,10 +222,150 @@ export const verifyEmailOtp = async (req, res) => {
     };
 
 
-    await transporter.sendMail(mailOption); 
+    await transporter.sendMail(mailOption);
 
     return res.json({ success: true, message: "Email verified successfully" });
   } catch (error) {
     return res.json({ success: false, message: `Error in  verifyEmailOtp Controller: ${error.message}` });
+  }
+}
+//controller to check if the user is logged in or not
+
+export const isAuthenticated = async (req, res) => {
+  try {
+    return res.status(200).json({ success: true, message: 'User is Authenticated' })
+  } catch (error) {
+
+    return res.status(500).json({ success: false, message: `Not Authenticated ${error.message}` })
+  }
+}
+
+export const sendResetOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) return res.json({ success: false, message: `email missing` });
+
+    const isUser = await userModel.findOne({ email });
+
+    if (!isUser) return res.json({ success: false, message: `No user found associated with this email` });
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    isUser.resetPasswordOtp = otp;
+    isUser.resetOtpExpiryTime = Date.now() + 24 * 60 * 60 * 1000;
+
+    await isUser.save();
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "🔐 Reset Your Password - OTP Inside",
+      html: `
+    <div style="max-width: 600px; margin: auto; padding: 30px; border-radius: 12px; font-family: 'Segoe UI', Roboto, sans-serif; background-color: #ffffff; border: 1px solid #eaeaea; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; font-size: 24px; color: #2c3e50;">Password Reset Request</h1>
+        <p style="color: #7f8c8d; font-size: 14px;">Your security is our top priority</p>
+      </div>
+      <p style="font-size: 16px; color: #34495e;">Hello,</p>
+      <p style="font-size: 16px; color: #34495e;">
+        We received a request to reset your password. Please use the OTP below to proceed with resetting your account credentials.
+      </p>
+      <div style="text-align: center; margin: 40px 0;">
+        <span style="display: inline-block; background-color: #f4f6f8; padding: 16px 32px; border-radius: 8px; font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #2d3748; border: 1px dashed #ccc;">
+          ${otp}
+        </span>
+      </div>
+      <p style="font-size: 15px; color: #7f8c8d;">
+        This OTP is valid for <strong>10 minutes</strong>. Please do not share this code with anyone for security reasons.
+      </p>
+      <p style="font-size: 15px; color: #7f8c8d;">
+        If you didn’t request a password reset, you can safely ignore this email.
+      </p>
+      <hr style="margin: 30px 0; border: none; border-top: 1px solid #ecf0f1;">
+      <p style="font-size: 14px; color: #bdc3c7; text-align: center;">
+        &copy; ${new Date().getFullYear()} YourAppName. All rights reserved.
+      </p>
+    </div>
+  `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.json({ success: true, message: `Reset OTP send to email` });
+  } catch (error) {
+    return res.json({ success: false, message: `Error in sendResetOtp controller ${error.message}` })
+  }
+}
+
+export const verifyResetOtp = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) return res.json({ success: false, message: `Details missing` });
+
+    const isUser = await userModel.findOne({ email });
+
+    if (!isUser) return res.json({ success: false, message: `No user found associated with this email` });
+
+    if (isUser.resetPasswordOtp === '' || isUser.resetPasswordOtp !== otp) {
+      return res.json({ success: false, message: `invalid OTP` });
+    }
+    if (isUser.resetOtpExpiryTime < Date.now()) {
+      return res.json({ success: false, message: `Expired OTP` });
+
+    }
+
+    const newHashPass = await bcrypt.hash(newPassword, 10);
+    console.log(`New Hash pass is ${newHashPass}`);
+    isUser.password = newHashPass;
+    isUser.resetPasswordOtp = '';
+    isUser.resetOtpExpiryTime = 0;
+
+    await isUser.save();
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "🔐 Password Changed Successfully",
+      html: `
+    <div style="max-width: 600px; margin: auto; padding: 30px; border-radius: 12px; font-family: 'Segoe UI', Roboto, sans-serif; background-color: #ffffff; border: 1px solid #eaeaea; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; font-size: 24px; color: #27ae60;">Password Changed</h1>
+        <p style="color: #7f8c8d; font-size: 14px;">Your credentials have been updated successfully</p>
+      </div>
+
+      <p style="font-size: 16px; color: #34495e;">Hello,</p>
+      <p style="font-size: 16px; color: #34495e;">
+        This is to confirm that your password has been changed successfully. If this action was done by you, no further steps are required.
+      </p>
+
+      <div style="margin: 30px 0; padding: 16px; background-color: #f0fdf4; border-left: 4px solid #2ecc71; border-radius: 8px;">
+        <p style="margin: 0; font-size: 15px; color: #2d3436;">
+          <strong>Change Time:</strong> ${new Date().toLocaleString()}
+        </p>
+        <p style="margin: 5px 0 0; font-size: 15px; color: #2d3436;">
+          <strong>Email:</strong> ${email}
+        </p>
+      </div>
+
+      <p style="font-size: 15px; color: #7f8c8d;">
+        If you did <strong>not</strong> make this change, please reset your password immediately or contact our support team for help.
+      </p>
+
+      <hr style="margin: 30px 0; border: none; border-top: 1px solid #ecf0f1;">
+
+      <p style="font-size: 14px; color: #bdc3c7; text-align: center;">
+        &copy; ${new Date().getFullYear()} YourAppName. All rights reserved.
+      </p>
+    </div>
+  `
+    };
+    transporter.sendMail(mailOptions);
+
+
+
+    return res.json({ success: true, message: `Password Rest Successfully` })
+
+  } catch (error) {
+    return res.json({ success: false, message: `Error in verifyResetOtp controller ${error.message}` })
   }
 }
