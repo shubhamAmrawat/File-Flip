@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 
-import { ArrowRight, Menu, MoveRight, User, X } from "lucide-react";
+import {  Menu, User,} from "lucide-react";
 import MobileMenu from "./MobileMenu";
+import { Link, useNavigate } from "react-router-dom";
+import AboutPage from "../Pages/AboutPage";
+// import { useNavigation } from "react-router-dom";
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     if (isMenuOpen) {
       document.body.classList.add("overflow-hidden");
@@ -27,7 +32,7 @@ const NavigationBar = () => {
 
   return (
     <header className="flex items-center justify-between w-full p-4 sm:p-6 sm:px-18 absolute top-0 ">
-      <img src={logo} alt=" " className="w-28 sm:w-27" />
+      <img src={logo} alt=" " className="w-28 sm:w-27 cursor-pointer" onClick={()=>navigate('/')} />
 
       <div className="flex gap-2 items-center">
         <button
@@ -45,9 +50,9 @@ const NavigationBar = () => {
             <li className="text-sm font-medium text-gray-700 transition-colors hover:text-rose-600 cursor-pointer">
               Audio Tools
             </li>
-            <li className="text-sm font-medium text-gray-700 transition-colors hover:text-rose-600 cursor-pointer">
+            <Link className="text-sm font-medium text-gray-700 transition-colors hover:text-rose-600 cursor-pointer" to={'/about'}>
               About
-            </li>
+            </Link>
           </ul>
         </nav>
 
