@@ -13,7 +13,7 @@ const LandingSection = () => {
     <div>
       <main className="w-full mt-30 p-4 sm:p-6 sm:px-18">
         <div className="flex flex-col items-center justify-center gap-4  py-32">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-800 md:text-6xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-800 md:text-6xl text-center">
             Convert <span className="text-[#f43f5e]">Anything,</span> Anytime
           </h1>
           <p className="mt-6 max-w-prose text-gray-600 md:text-lg text-center">

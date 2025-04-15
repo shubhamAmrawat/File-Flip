@@ -48,7 +48,7 @@ const AboutPage = () => {
           </div>
         </section>
 
-        <section class="bg-gray-50 px-4 py-16">
+        <section class=" px-4 py-16">
           <div class="container mx-auto">
             <h2 class="mb-12 text-center text-3xl font-bold text-gray-900">
               How It Works
@@ -254,7 +254,7 @@ const AboutPage = () => {
         </section>
 
         <section class="mx-auto px-4 py-16">
-          <div class="mx-auto max-w-3xl rounded-xl  bg-white p-8 shadow-md">
+          <div class="mx-auto max-w-3xl rounded-xl  bg-gray-50/50 p-8 shadow-md">
             <h2 class="mb-6 text-center text-3xl font-bold text-gray-900">
               Get in Touch
             </h2>
