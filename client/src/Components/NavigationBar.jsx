@@ -3,13 +3,16 @@ import logo from "../assets/logo.png";
 
 import {  Menu, User,} from "lucide-react";
 import MobileMenu from "./MobileMenu";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AboutPage from "../Pages/AboutPage";
 // import { useNavigation } from "react-router-dom";
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
   const navigate = useNavigate(); 
+
+  const location = useLocation(); 
+  const isloginPage = location.pathname === '/login';
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -49,12 +52,12 @@ const NavigationBar = () => {
         </button>
         <nav aria-label="Main navigation" className=" mr-4 hidden md:flex">
           <ul className="flex items-center gap-5 ">
-            <li className="text-sm font-medium  text-gray-700 transition-colors hover:text-rose-600 cursor-pointer whitespace-nowrap">
+            <Link className="text-sm font-medium  text-gray-700 transition-colors hover:text-rose-600 cursor-pointer whitespace-nowrap">
               File Converter
-            </li>
-            <li className="text-sm font-medium  text-gray-700 transition-colors hover:text-rose-600 cursor-pointer whitespace-nowrap">
+            </Link>
+            <Link className="text-sm font-medium  text-gray-700 transition-colors hover:text-rose-600 cursor-pointer whitespace-nowrap">
               Audio Tools
-            </li>
+            </Link>
             <Link
               className="text-sm font-medium  text-gray-700 transition-colors hover:text-rose-600 cursor-pointer whitespace-nowrap"
               to={"/about"}
@@ -65,15 +68,18 @@ const NavigationBar = () => {
         </nav>
 
         <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer hidden md:flex">
-          <span className="font-medium  whitespace-nowrap">
-            Get Started
-          </span>
+          <span className="font-medium  whitespace-nowrap">Get Started</span>
         </button>
 
-        <button className="flex items-center justify-center gap-2 bg-rose-100 rounded-full  md:border md:border-gray-500  md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white">
-          <span className="font-medium hidden md:flex">Login</span>
-          <User width={20} />
-        </button>
+        {!isloginPage && (
+          <button
+            className="flex items-center justify-center gap-2 bg-rose-100 rounded-full  md:border md:border-gray-500  md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white"
+            onClick={() => navigate("/login")}
+          >
+            <span className="font-medium hidden md:flex">Login</span>
+            <User width={20} />
+          </button>
+        )}
 
         <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       </div>

@@ -8,7 +8,7 @@ import AboutPage from './Pages/AboutPage';
 
 const App = () => {
   return (
-    <div className="">
+    <div className="bg-gradient-to-b from-slate-50 to-red-50 bg-cover bg-center min-h-screen">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />

@@ -4,7 +4,7 @@ import LandingSection from '../Components/LandingSection';
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gradient-to-b from-slate-50 to-red-50 bg-cover bg-center ">
+    <div className="flex flex-col items-center justify-start">
       <NavigationBar />
       <LandingSection />
     </div>
