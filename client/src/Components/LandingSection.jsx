@@ -38,7 +38,7 @@ const LandingSection = () => {
               className="flex flex-col items-center rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all hover:shadow-md"
             >
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
-                <img src={wordToPdf} alt="" />class
+                <img src={wordToPdf} alt="" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-gray-900">
                 <span className="text-sky-500">Word</span> to{" "}
