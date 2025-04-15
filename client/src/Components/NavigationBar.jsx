@@ -55,7 +55,7 @@ const NavigationBar = () => {
           <span className="font-medium">Get Started</span>
         </button>
 
-        <button className="flex items-center justify-center gap-2 border border-gray-500 rounded-full px-3 md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white">
+        <button className="flex items-center justify-center gap-2 bg-rose-100 rounded-full  md:border md:border-gray-500  md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white">
           <span className="font-medium hidden md:flex">Login</span>
           <User width={20} />
         </button>
