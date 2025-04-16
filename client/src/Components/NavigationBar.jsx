@@ -13,6 +13,17 @@ const NavigationBar = () => {
 
   const location = useLocation(); 
   const isloginPage = location.pathname === '/login';
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setScrolled(offset > 290); // Change 10 to your preferred scroll threshold
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -34,7 +45,11 @@ const NavigationBar = () => {
   }, []);
 
   return (
-    <header className="flex items-center justify-between w-full p-4 sm:p-6 sm:px-18 absolute top-0 ">
+    <header
+      className={`flex items-center justify-between w-full py-2 sm:py-3 sm:px-18 sticky top-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-rose-50/70 shadow  backdrop-blur-md" : "bg-transparent"
+      }`}
+    >
       <img
         src={logo}
         alt=" "
