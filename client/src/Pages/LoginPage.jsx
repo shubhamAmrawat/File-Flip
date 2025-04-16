@@ -12,11 +12,36 @@ const LoginPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({}); 
   const navigate = useNavigate(); 
-  const { backendUrl, setIsLoggedIn } = useContext(AppContext);
+  const { backendUrl, setIsLoggedIn , getUserData } = useContext(AppContext);
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const newErrors = {}; 
+
+    //common validations
+
+    if (!email) {
+      newErrors.email="Email Is Required"
+    }else if(!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Invalid Email Format"; 
+    }
+
+    if (!password) {
+      newErrors.password = "Password Is Required";
+    } else if(password.length<6) {
+      newErrors.password = "Password must be at least 6 characters long ";
+    }
+
+    if (loginSwitch === 'SignUp' && !name) newErrors.name = "Name is Required"; 
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors); 
+      return; 
+    }
+    setFormErrors({});
     try {
-      e.preventDefault();
       console.log(`Name: ${name}\nEmail: ${email}\nPassword: ${password}`);
 
       axios.defaults.withCredentials = true;
@@ -42,6 +67,7 @@ const LoginPage = () => {
 
          if (data.success) {
            setIsLoggedIn(true);
+           getUserData(); 
            navigate("/");
          } else {
            toast.error(data.message);
@@ -103,6 +129,11 @@ const LoginPage = () => {
                     autoComplete="name"
                   />
                 </div>
+                {formErrors.name && (
+                  <p className="text-red-500 text-sm mt-1 animate-pulse">
+                    {formErrors.name}
+                  </p>
+                )}
               </div>
             )}
 
@@ -122,6 +153,11 @@ const LoginPage = () => {
                   autoComplete="email"
                 />
               </div>
+              {formErrors.email && (
+                <p className="text-red-500 text-sm mt-1 animate-pulse">
+                  {formErrors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -143,6 +179,7 @@ const LoginPage = () => {
                       : "new-password"
                   }
                 />
+
                 {passVisible ? (
                   <EyeOff
                     onClick={() => setVisiblity(!passVisible)}
@@ -157,6 +194,11 @@ const LoginPage = () => {
                   />
                 )}
               </div>
+              {formErrors.password && (
+                <p className="text-red-500 text-sm mt-1 animate-pulse">
+                  {formErrors.password}
+                </p>
+              )}
               <div className="flex justify-end mt-2">
                 <a
                   href="/forgot-password"

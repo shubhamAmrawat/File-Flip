@@ -2,22 +2,32 @@
 import React, { useContext, useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 
-import {  Menu, User,} from "lucide-react";
+import {
+  LogOutIcon,
+  MailCheck,
+  MailWarning,
+  Menu,
+  MenuSquare,
+  User,
+  UserCheck,
+  UserCircle,
+} from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/appContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-
 const NavigationBar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
-  const navigate = useNavigate(); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const location = useLocation(); 
-  const isLoginPage = location.pathname === '/login';
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
   const [scrolled, setScrolled] = useState(false);
-  const { isLoggedIn , userData , backendUrl , setUserData , setIsLoggedIn} = useContext(AppContext); 
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const { isLoggedIn, userData, backendUrl, setUserData, setIsLoggedIn } =
+    useContext(AppContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,21 +60,20 @@ const NavigationBar = () => {
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(backendUrl + '/api/auth/logout'); 
+      const { data } = await axios.post(backendUrl + "/api/auth/logout");
 
       if (data.success) {
-        toast.success(data.message); 
+        toast.success(data.message);
 
-        setIsLoggedIn(false); 
-        setUserData(false); 
-        
+        setIsLoggedIn(false);
+        setUserData(false);
       } else {
-        toast.error(data.message); 
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message); 
+      toast.error(error.message);
     }
-  }
+  };
 
   return (
     <header
@@ -109,15 +118,64 @@ const NavigationBar = () => {
         </button>
 
         {!isLoginPage && (
-          <button
-            className="flex items-center justify-center gap-2 bg-rose-100 rounded-full md:border md:border-gray-500 md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white"
-            onClick={isLoggedIn ? handleLogout : () => navigate("/login")}
-          >
-            <span className="font-medium hidden md:flex">
-              {isLoggedIn ? "Logout" : "Login"}
-            </span>
-            <User width={20} />
-          </button>
+          <>
+            {isLoggedIn ? (
+              // Logout Button
+              <div
+                className={`bg-rose-200 flex items-center justify-center rounded-full w-10 h-10  text-gray-800 relative  cursor-pointer font-bold border border-gray-500 hover:bg-rose-600 hover:text-white transition-all duration-200 ${
+                  avatarOpen && "bg-rose-500 text-white"
+                } `}
+                onClick={() => setAvatarOpen(!avatarOpen)}
+              >
+                <span>
+                  {userData && userData.name[0].toUpperCase()}                
+                </span>
+                <div
+                  className={`absolute ${
+                    avatarOpen ? "block" : "hidden"
+                  } top-12 right-0 z-20 w-52 bg-white rounded-lg shadow-lg`}
+                >
+                  <ul className="list-none m-2 flex flex-col gap-2    rounded-md text-sm">
+                    <li className="py-2 px-2 rounded-lg   bg-rose-500 text-gray-50 cursor-pointer text-[17px] flex gap-2 items-center">
+                      <UserCircle />
+                      <span className="truncate whitespace-nowrap ">
+                        {userData && userData.name}
+                      </span>
+                    </li>
+
+                    <li className="py-2 px-2 rounded-lg hover:bg-gray-200 text-gray-700  cursor-pointer pr-10 flex gap-2 items-center">
+                      <MenuSquare />
+                      Account
+                    </li>
+
+                    {!userData.isAccountVerified && (
+                      <li className="py-2 px-2 rounded-lg hover:bg-gray-200 text-red-500   cursor-pointer flex gap-2 items-center">
+                        <MailWarning className="animate-pulse"/>
+                        Verify your Email
+                      </li>
+                    )}
+
+                    <li
+                      className="py-2 px-2 rounded-lg hover:bg-gray-200 text-gray-700  cursor-pointer pr-10 flex gap-2 items-center"
+                      onClick={handleLogout}
+                    >
+                      <LogOutIcon />
+                      Logout
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              // Login Button
+              <button
+                className="flex items-center justify-center gap-2 bg-rose-100 rounded-full md:border md:border-gray-500 md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white"
+                onClick={() => navigate("/login")}
+              >
+                <span className="font-medium hidden md:flex">Login</span>
+                <User width={20} />
+              </button>
+            )}
+          </>
         )}
 
         {isMenuOpen && (
