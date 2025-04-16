@@ -18,13 +18,11 @@ app.use(cors({
   credentials: true,
 }));
 
-
 app.get('/', (req, res) => {
   res.send("FILE FLIP INITIALL");
 })
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
-
 
 
 app.listen(port, () => {
