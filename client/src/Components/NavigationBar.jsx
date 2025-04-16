@@ -4,8 +4,7 @@ import logo from "../assets/logo.png";
 import {  Menu, User,} from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import AboutPage from "../Pages/AboutPage";
-// import { useNavigation } from "react-router-dom";
+
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
@@ -46,7 +45,7 @@ const NavigationBar = () => {
 
   return (
     <header
-      className={`flex items-center justify-between w-full py-2 sm:py-3 sm:px-18 sticky top-0 z-50 transition-all duration-300 ${
+      className={`flex items-center justify-between w-full py-2 sm:py-3 px-5 sm:px-18 sticky top-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-rose-50/70 shadow  backdrop-blur-md" : "bg-transparent"
       }`}
     >
@@ -96,7 +95,12 @@ const NavigationBar = () => {
           </button>
         )}
 
-        <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        {isMenuOpen && (
+          <MobileMenu
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+          />
+        )}
       </div>
     </header>
   );
