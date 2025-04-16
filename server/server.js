@@ -8,12 +8,13 @@ import userRoutes from "./router/userRouter.js";
 
 const app = express();
 const port = process.env.PORT || 5100;
-
+const allowedOrigins = ['http://localhost:5174','http://192.168.29.69:5174']
 connectDb();
 //middleware 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
+  origin:allowedOrigins,
   credentials: true,
 }));
 

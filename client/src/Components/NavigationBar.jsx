@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 
 import {  Menu, User,} from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AppContext } from "../Context/appContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 
 const NavigationBar = () => {
@@ -11,8 +15,9 @@ const NavigationBar = () => {
   const navigate = useNavigate(); 
 
   const location = useLocation(); 
-  const isloginPage = location.pathname === '/login';
+  const isLoginPage = location.pathname === '/login';
   const [scrolled, setScrolled] = useState(false);
+  const { isLoggedIn , userData , backendUrl , setUserData , setIsLoggedIn} = useContext(AppContext); 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,6 +47,24 @@ const NavigationBar = () => {
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.post(backendUrl + '/api/auth/logout'); 
+
+      if (data.success) {
+        toast.success(data.message); 
+
+        setIsLoggedIn(false); 
+        setUserData(false); 
+        
+      } else {
+        toast.error(data.message); 
+      }
+    } catch (error) {
+      toast.error(error.message); 
+    }
+  }
 
   return (
     <header
@@ -85,12 +108,14 @@ const NavigationBar = () => {
           <span className="font-medium  whitespace-nowrap">Get Started</span>
         </button>
 
-        {!isloginPage && (
+        {!isLoginPage && (
           <button
-            className="flex items-center justify-center gap-2 bg-rose-100 rounded-full  md:border md:border-gray-500  md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white"
-            onClick={() => navigate("/login")}
+            className="flex items-center justify-center gap-2 bg-rose-100 rounded-full md:border md:border-gray-500 md:rounded-full px-[10px] md:px-6 py-2 text-gray-800 hover:bg-rose-500 transition-all cursor-pointer hover:text-white"
+            onClick={isLoggedIn ? handleLogout : () => navigate("/login")}
           >
-            <span className="font-medium hidden md:flex">Login</span>
+            <span className="font-medium hidden md:flex">
+              {isLoggedIn ? "Logout" : "Login"}
+            </span>
             <User width={20} />
           </button>
         )}

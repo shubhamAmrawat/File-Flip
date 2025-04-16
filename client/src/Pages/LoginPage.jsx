@@ -1,23 +1,62 @@
-import React, { useState } from "react";
-import NavigationBar from "../Components/NavigationBar.jsx";
+import React, { useContext, useState } from "react";
+
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import AuthNavbar from "../Components/AuthNavbar.jsx";
-
+import axios from 'axios'
+import { AppContext } from "../Context/appContext.jsx";
+import {  useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const LoginPage = () => {
   const [loginSwitch, setSwitch] = useState("Login");
   const [passVisible, setVisiblity] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate(); 
+  const { backendUrl, setIsLoggedIn } = useContext(AppContext);
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      console.log(`Name: ${name}\nEmail: ${email}\nPassword: ${password}`);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted");
+      axios.defaults.withCredentials = true;
+
+      if (loginSwitch === "Login") {
+        const { data } = await axios.post(backendUrl + "/api/auth/login", {
+          email,
+          password,
+        });
+
+        if (data.success) {
+          setIsLoggedIn(true);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+         const { data } = await axios.post(backendUrl + "/api/auth/signup", {
+           name, 
+           email,
+           password,
+         });
+
+         if (data.success) {
+           setIsLoggedIn(true);
+           navigate("/");
+         } else {
+           toast.error(data.message);
+         }
+      }
+    } catch (error) {
+       toast.error(error.message);
+    }
+
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start  text-gray-800">
-      <AuthNavbar/>
+      <AuthNavbar />
       <div className="w-full max-w-lg mt-12 px-4 sm:px-6 md:px-8 ">
-       
-
         {/* Login/SignUp Switch */}
         <div className="w-full flex gap-2 px-2 py-1 mt-5 items-center justify-evenly bg-gray-100 text-gray-800 rounded-lg border border-gray-300">
           {["Login", "SignUp"].map((type) => (
@@ -57,6 +96,8 @@ const LoginPage = () => {
                   <input
                     id="fullname"
                     type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
                     className="flex-1 outline-none text-sm"
                     autoComplete="name"
@@ -74,6 +115,8 @@ const LoginPage = () => {
                 <input
                   id="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="sample@dev.com"
                   className="flex-1 outline-none text-sm"
                   autoComplete="email"
@@ -91,6 +134,8 @@ const LoginPage = () => {
                   id="password"
                   type={passVisible ? "text" : "password"}
                   placeholder="••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="flex-1 outline-none text-sm"
                   autoComplete={
                     loginSwitch === "Login"
@@ -124,7 +169,7 @@ const LoginPage = () => {
 
             <button
               type="submit"
-              className="bg-rose-500 rounded-md py-2 text-base font-medium text-white hover:bg-rose-600 transition"
+              className="bg-rose-500 rounded-md py-2 text-base font-medium text-white hover:bg-rose-600 transition cursor-pointer"
             >
               {loginSwitch}
             </button>
