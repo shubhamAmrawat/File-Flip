@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDb from "./config/mongoDb.js";
 import authRouter from "./router/authRoutes.js";
 import userRoutes from "./router/userRouter.js";
+import fileRouter from "./router/fileRouter.js";
 
 const app = express();
 const port = process.env.PORT || 5100;
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
+app.use('/api/convert',fileRouter)
 
 
 app.listen(port, () => {
