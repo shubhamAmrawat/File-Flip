@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
-app.use('/api/convert',fileRouter)
+app.use('/api/files',fileRouter)
 
 
 app.listen(port, () => {

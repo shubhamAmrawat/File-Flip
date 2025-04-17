@@ -4,6 +4,7 @@ import express from 'express';
 import multer from 'multer';
 import path from "path"; 
 import fs from 'fs';
+import { exec } from 'child_process';
 
 const fileRouter = express.Router(); 
 
@@ -72,6 +73,33 @@ fileRouter.post("/upload", upload.single("file"), (req, res) => {
       mimetype: req.file.mimetype,
       size: req.file.size
     }
+  });
+})
+
+fileRouter.post('/convert-to-mp3', async (req, res) => {
+  const { filename } = req.body; 
+
+  if (!filename || !filename.endsWith(".mp4")) {
+    return res.status(400).json({ success: false, message: "Invalid or missing .mp4 filename" });
+  }
+  const inputPath = path.join(uploadDir, filename);
+  const outputFilename = filename.replace(".mp4", ".mp3");
+  const outputPath = path.join(convertedDir, outputFilename);
+
+  const cmd = `ffmpeg -i "${inputPath}" -vn -ab 128k -ar 44100 -y "${outputPath}"`;
+
+  exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error("Conversion error:", error);
+      return res.status(500).json({ success: false, message: "Conversion failed" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "File converted successfully",
+      convertedFile: outputFilename,
+      path: outputPath,
+    });
   });
 })
 
