@@ -7,8 +7,10 @@ import pptTopdf from "../assets/ppt-pdf.png";
 import videoToaudio from "../assets/video-mp3.png";
 import ytToMp3 from "../assets/yt-mp3.png";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 
 const LandingSection = () => {
+  const navigate = useNavigate(); 
   return (
     <div>
       <main className="w-full mt-30 p-4 sm:p-6 sm:px-18">
@@ -20,7 +22,7 @@ const LandingSection = () => {
             The easiest way to convert documents, images, videos, and audio
             files online. No installations required.
           </p>
-          <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex">
+          <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex" onClick={()=>navigate('/convert')}>
             Get Started
             <ArrowRight />
           </button>

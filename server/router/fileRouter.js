@@ -12,7 +12,7 @@ import { deleteFileIfExists } from '../utils/fileHelpers.js';
 
 const fileRouter = express.Router();
 
-// fileRouter.post("/upload", upload.single("file"), handleFileUpload);
+fileRouter.post("/upload", upload.single("file"), handleFileUpload);
 fileRouter.post("/convert-to-mp3", upload.single('file'), convertToMp3);
 fileRouter.post("/convert-to-pdf", upload.single("file"), convertToPdf);
 fileRouter.get("/downloads/:filename", (req, res) => {
