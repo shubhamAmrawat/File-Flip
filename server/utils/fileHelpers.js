@@ -14,5 +14,5 @@ export const deleteFileIfExists = (filePath) => {
 
 // Optional helper if you want to get a full download URL from filename
 export const getDownloadUrl = (req, filename) => {
-  return `${req.protocol}://${req.get('host')}/downloads/${filename}`;
+  return `${req.protocol}://${req.get('host')}/api/files/downloads/${filename}`;
 };

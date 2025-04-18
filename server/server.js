@@ -7,6 +7,7 @@ import authRouter from "./router/authRoutes.js";
 import userRoutes from "./router/userRouter.js";
 import fileRouter from "./router/fileRouter.js";
 
+
 const app = express();
 const port = process.env.PORT || 5100;
 const allowedOrigins = ['http://localhost:5174','http://192.168.29.69:5174']
