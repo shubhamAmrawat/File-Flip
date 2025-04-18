@@ -22,7 +22,9 @@ const LandingSection = () => {
             The easiest way to convert documents, images, videos, and audio
             files online. No installations required.
           </p>
-          <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex" onClick={()=>navigate('/convert')}>
+          <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex"
+            // onClick={() => navigate('/convert')}
+          >
             Get Started
             <ArrowRight />
           </button>
@@ -38,6 +40,7 @@ const LandingSection = () => {
             <a
               href="/convert"
               className="flex flex-col items-center rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all hover:shadow-md"
+              onClick={()=>navigate('/convert')}
             >
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
                 <img src={wordToPdf} alt="" />
