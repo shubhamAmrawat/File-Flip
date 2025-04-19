@@ -4,12 +4,10 @@ import logo from "../assets/logo.png";
 
 import {
   LogOutIcon,
-  MailCheck,
   MailWarning,
   Menu,
   MenuSquare,
   User,
-  UserCheck,
   UserCircle,
 } from "lucide-react";
 import MobileMenu from "./MobileMenu";
@@ -143,7 +141,7 @@ const NavigationBar = () => {
                       </span>
                     </li>
 
-                    <li className="py-2 px-2 rounded-lg hover:bg-gray-200 text-gray-700  cursor-pointer pr-10 flex gap-2 items-center">
+                    <li className="py-2 px-2 rounded-lg hover:bg-gray-200 text-gray-700  cursor-pointer pr-10 flex gap-2 items-center" onClick={()=>navigate('/profile')}>
                       <MenuSquare />
                       Account
                     </li>

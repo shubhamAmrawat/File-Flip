@@ -7,6 +7,7 @@ import ResetPassword from "./Pages/ResetPassword";
 import AboutPage from "./Pages/AboutPage";
 import { ToastContainer } from "react-toastify";
 import ConvertPage from "./Pages/ConvertPage";
+import ProfilePage from "./Pages/ProfilePage";
 const App = () => {
   return (
     <>
@@ -19,7 +20,8 @@ const App = () => {
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/convert" element={<ConvertPage/>} />
+          <Route path="/convert" element={<ConvertPage />} />
+          <Route path="/profile" element={<ProfilePage/>} />
         </Routes>
       </div>
     </>
