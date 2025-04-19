@@ -69,33 +69,126 @@ const ProfilePage = () => {
           {/* Main Section */}
           <section className="md:col-span-3">
             {activeTab === "profile" && (
-              <div className="bg-slate-100 p-6 rounded-xl grid gap-6">
-                <div>
-                  <label className="block text-gray-600 text-sm">
-                    Full Name
-                  </label>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {userData?.name || "N/A"}
+              <div className="grid gap-6">
+                {/* 🔐 Verification Status Card */}
+                <div
+                  className={`rounded-xl px-6 py-2 shadow-sm border ${
+                    userData?.isAccountVerified
+                      ? "bg-green-50 border-green-200"
+                      : "bg-yellow-50 border-yellow-200"
+                  }`}
+                >
+                  <h3
+                    className={`text-lg font-semibold mb-2 ${
+                      userData?.isAccountVerified
+                        ? "text-green-700"
+                        : "text-yellow-700"
+                    }`}
+                  >
+                    Verification Status
+                  </h3>
+                  <p
+                    className={`text-sm ${
+                      userData?.isAccountVerified
+                        ? "text-green-600"
+                        : "text-yellow-700"
+                    }`}
+                  >
+                    {userData?.isAccountVerified
+                      ? "Your email has been successfully verified."
+                      : "Your email is not verified. Please check your inbox for a verification email or request a new one."}
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-gray-600 text-sm">Email</label>
-                  <p className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    {userData?.email || "N/A"}
-                    {userData?.isAccountVerified ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
-                        Verified
-                      </span>
-                    ) : (
-                      <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md animate-pulse">
-                        Not Verified
-                      </span>
-                    )}
-                  </p>
+                {/* 🧍 Personal Details */}
+                <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
+                  <h3 className="text-lg font-semibold text-rose-600 mb-4">
+                    Personal Details
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Full Name
+                      </label>
+                      <p className="text-base font-semibold text-gray-900">
+                        {userData?.name || "N/A"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Email
+                      </label>
+                      <p className="text-base font-semibold text-gray-900">
+                        {userData?.email || "N/A"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Phone
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.phone || "Not provided"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Date of Birth
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.dob
+                          ? new Date(userData.dob).toLocaleDateString()
+                          : "Not specified"}
+                      </p>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-gray-500 text-sm">Bio</label>
+                      <p className="text-base text-gray-800">
+                        {userData?.bio || "No bio added yet."}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-              
+                {/* 🌍 Location Details */}
+                <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
+                  <h3 className="text-lg font-semibold text-rose-600 mb-4">
+                    Location Details
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Country
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.country || "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        State
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.state || "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        City
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.city || "Not specified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-gray-500 text-sm">
+                        Pincode
+                      </label>
+                      <p className="text-base text-gray-800">
+                        {userData?.pincode || "Not specified"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -166,7 +259,7 @@ const ProfilePage = () => {
               </button>
               <button
                 onClick={() => {
-                  // Handle logout logic here
+                  // TODO: Hook your logout function here
                   setShowLogoutConfirm(false);
                 }}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
