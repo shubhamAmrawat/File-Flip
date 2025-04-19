@@ -5,6 +5,7 @@ import { exec as execCb } from 'child_process';
 import libre from 'libreoffice-convert';
 import { promisify } from 'util';
 import { deleteFileIfExists, getDownloadUrl } from '../utils/fileHelpers.js';
+import Stats from '../models/statsModel.js';
 
 const exec = promisify(execCb); // Convert callback to promise
 
@@ -51,6 +52,7 @@ export const convertToMp3 = async (req, res) => {
     // Send response with download link
     const downloadUrl = getDownloadUrl(req, outputFilename);
 
+    await Stats.updateOne({}, { $inc: { totalConversions: 1 } }, { upsert: true });
     res.status(200).json({
       success: true,
       message: "File converted successfully",
@@ -69,7 +71,7 @@ export const convertToPdf = async (req, res) => {
     const outputFilename = req.file.filename.replace(path.extname(req.file.filename), '.pdf');
     const outputPath = path.join('converted', outputFilename);
 
-    libre.convert(fileBuffer, '.pdf', undefined, (err, done) => {
+    libre.convert(fileBuffer, '.pdf', undefined, async(err, done) => {
       if (err) {
         console.error("Conversion error:", err);
         return res.status(500).json({ error: "Conversion failed" });
@@ -79,8 +81,15 @@ export const convertToPdf = async (req, res) => {
 
       // Cleanup uploaded file
       deleteFileIfExists(filePath);
+      // ✅ Count conversion only after success
+      try {
+        await Stats.updateOne({}, { $inc: { totalConversions: 1 } }, { upsert: true });
+      } catch (err) {
+        console.error("Failed to update conversion stats:", err);
+      }
 
       const downloadUrl = getDownloadUrl(req, outputFilename);
+      
       res.status(200).json({
         success: true,
         message: "File converted successfully",
@@ -88,6 +97,7 @@ export const convertToPdf = async (req, res) => {
       });
     });
 
+    
   } catch (err) {
     console.error("PDF Conversion error:", err);
     res.status(500).json({ error: "Internal server error" });

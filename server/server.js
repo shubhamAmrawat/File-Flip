@@ -6,6 +6,7 @@ import connectDb from "./config/mongoDb.js";
 import authRouter from "./router/authRoutes.js";
 import userRoutes from "./router/userRouter.js";
 import fileRouter from "./router/fileRouter.js";
+import Stats from "./models/statsModel.js";
 
 
 const app = express();
@@ -25,7 +26,33 @@ app.get('/', (req, res) => {
 })
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
-app.use('/api/files',fileRouter)
+app.use('/api/files', fileRouter)
+
+//stat route 
+app.get('/api/stats', async (req, res) => {
+  try {
+    const stats = await Stats.findOne();
+
+    if (!stats) {
+      return res.status(404).json({
+        success: false,
+        message: "Stats not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      stats
+    });
+
+  } catch (error) {
+    console.error("Error fetching stats:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
+  }
+});
 
 
 app.listen(port, () => {

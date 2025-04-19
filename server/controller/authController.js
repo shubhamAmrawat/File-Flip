@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import transporter from "../config/nodemailer.js";
 import { text } from "express";
+import Stats from "../models/statsModel.js";
 
 export const register = async (req, res) => {
   try {
@@ -24,6 +25,7 @@ export const register = async (req, res) => {
 
     await user.save();
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '7d' });
+
 
     res.cookie('token', token, {
       httpOnly: true,
@@ -74,7 +76,7 @@ export const register = async (req, res) => {
 
     await transporter.sendMail(emailOption);
 
-
+    await Stats.updateOne({}, { $inc: { totalUsers: 1, totalVisits: 1 } }, { upsert: true });
     return res.json({ success: true, message: `Signup Successful` })
   } catch (error) {
     return res.json({ success: false, message: `Error in register controller : ${error.message}` })
@@ -105,6 +107,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
+    await Stats.updateOne({}, { $inc: { totalVisits: 1 } }, { upsert: true });
     return res.json({ success: true, message: "Login Successful" });
 
   } catch (error) {

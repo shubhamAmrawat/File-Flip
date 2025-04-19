@@ -10,7 +10,7 @@ const ConvertPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [downloadPath, setDownloadPath] = useState("");
 
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, conversionCount } = useContext(AppContext);
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedFile(acceptedFiles[0]);
@@ -123,10 +123,7 @@ const ConvertPage = () => {
                 rel="noopener noreferrer"
                 download
               >
-                <button
-                  type="button"
-                  className="w-full  "
-                >
+                <button type="button" className="w-full  ">
                   <span className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-md transition cursor-pointer">
                     {" "}
                     Download Converted File{" "}
@@ -137,6 +134,12 @@ const ConvertPage = () => {
           </form>
         </div>
       </main>
+
+      <div className="flex justify-end px-5 mb-4">
+        <p className="border rounded-lg px-5 py-2 ">
+          Total files converted : {conversionCount}
+        </p>
+      </div>
       <Footer />
     </div>
   );

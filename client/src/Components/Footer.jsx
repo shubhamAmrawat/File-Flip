@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { AppContext } from '../Context/appContext';
 
 const Footer = () => {
+  const { visitersCount } = useContext(AppContext); 
   return (
     <footer className="border-t bg-gradient-to-t from-slate-50 to-red-50 bg-cover bg-center border-rose-100 py-4 px-4">
       <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
@@ -13,6 +15,10 @@ const Footer = () => {
           >
             Shubham Amrawat.
           </a>
+        </p>
+
+        <p>
+          Total Visitors :{visitersCount}
         </p>
         <div className="flex gap-4">
           <a

@@ -111,8 +111,8 @@ const LandingSection = () => {
         <section className=" px-4 py-16">
           <div className="mx-auto">
             <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 md:text-4xl">
-              Multimedia Tools
-            </h2>
+              Video & Youtube Tools
+            </h2> 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               <div className="rounded-xl flex flex-col justify-between border  border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
