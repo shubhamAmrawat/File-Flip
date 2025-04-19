@@ -110,7 +110,7 @@ const ConvertPage = () => {
               type="submit"
               className={`w-full ${downloadPath && "hidden"}`}
             >
-              <span className="bg-sky-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition cursor-pointer">
+              <span className="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-md transition cursor-pointer">
                 {" "}
                 Upload & Convert{" "}
               </span>

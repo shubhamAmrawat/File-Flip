@@ -22,7 +22,8 @@ const LandingSection = () => {
             The easiest way to convert documents, images, videos, and audio
             files online. No installations required.
           </p>
-          <button className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex"
+          <button
+            className=" items-center gap-2 border bg-[#f43f5e] border-gray-500 rounded-full px-6 py-2 text-white hover:bg-rose-600 transition-all cursor-pointer flex"
             // onClick={() => navigate('/convert')}
           >
             Get Started
@@ -40,7 +41,7 @@ const LandingSection = () => {
             <a
               href="/convert"
               className="flex flex-col items-center rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all hover:shadow-md"
-              onClick={()=>navigate('/convert')}
+              onClick={() => navigate("/convert")}
             >
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
                 <img src={wordToPdf} alt="" />
@@ -112,8 +113,8 @@ const LandingSection = () => {
             <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 md:text-4xl">
               Multimedia Tools
             </h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <div className="rounded-xl flex flex-col justify-between border  border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
                   <img src={videoToaudio} alt="" />
                 </div>
@@ -129,7 +130,7 @@ const LandingSection = () => {
                   </button>
                 </a>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
+              <div className="rounded-xl border flex flex-col justify-between border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
                   <img src={ytToMp3} alt="" />
                 </div>
@@ -138,6 +139,22 @@ const LandingSection = () => {
                 </h3>
                 <p className="mb-6 text-gray-600">
                   Get audio from YouTube videos as MP3 files to listen offline
+                </p>
+                <a href="/audio-tools">
+                  <button className="cursor-pointer rounded-md text-sm font-medium  h-10 px-4 py-2 bg-rose-500 text-white hover:bg-rose-600">
+                    Convert YouTube
+                  </button>
+                </a>
+              </div>
+              <div className="rounded-xl border flex flex-col justify-between border-gray-200 bg-white p-6 shadow-sm hover:drop-shadow-lg">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
+                  <img src={ytToMp3} alt="" />
+                </div>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  YouTube Video Downloader
+                </h3>
+                <p className="mb-6 text-gray-600">
+                  Download High quality video from YouTube
                 </p>
                 <a href="/audio-tools">
                   <button className="cursor-pointer rounded-md text-sm font-medium  h-10 px-4 py-2 bg-rose-500 text-white hover:bg-rose-600">
@@ -188,7 +205,7 @@ const LandingSection = () => {
 
       {/* footer */}
 
-     <Footer/>
+      <Footer />
     </div>
   );
 };
