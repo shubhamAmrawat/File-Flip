@@ -53,6 +53,7 @@ export const AppContextProvider = (props) => {
   useEffect(() => {
     getAuthState(); 
     getUsersStats(); 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   
   const value = {

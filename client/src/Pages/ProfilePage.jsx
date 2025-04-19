@@ -2,31 +2,88 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from "../Components/NavigationBar";
 import { AppContext } from "../Context/appContext";
-import { ArrowLeft, InfoIcon, LogOut } from "lucide-react";
+import {
+  ArrowLeft,
+  InfoIcon,
+  Locate,
+  LocateIcon,
+  LockIcon,
+  LockKeyhole,
+  LogOut,
+  MailCheck,
+  MailWarning,
+  Map,
+  MapPinCheck,
+  PersonStanding,
+  User,
+  User2,
+  User2Icon,
+  UserPen,
+} from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const ProfilePage = () => {
-  const { userData, backendUrl, setUserData , setIsLoggedIn } = useContext(AppContext);
+  const { userData, backendUrl, setIsLoggedIn } = useContext(AppContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [otp, setOtp] = useState("");
+
+  const handleSendOtp = async () => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/auth/send-otp`);
+
+      if (data.success) {
+        toast.success("OTP sent to your email");
+        setOtp(userData.verifyOtp);
+        setShowOtpField(true);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while sending OTP");
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/auth/verify-otp`, {
+        otp,
+      });
+
+      if (data.success) {
+        toast.success("Email verified successfully!");
+        // ⏳ Wait 2 seconds before refreshing + redirecting
+        setTimeout(() => {
+          window.location.replace("/profile");
+        }, 3000); // refresh + redirect
+      } else {
+        toast.error(data.message || "Invalid OTP");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to verify OTP");
+    }
+  };
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(backendUrl + "/api/auth/logout"); 
+      const { data } = await axios.post(backendUrl + "/api/auth/logout");
 
       if (data.success) {
-        toast.success("Logged Out Successfully")
+        toast.success("Logged Out Successfully");
         setIsLoggedIn(false);
-        navigate('/'); 
+        navigate("/");
       } else {
-        toast.error(data.message); 
+        toast.error(data.message);
       }
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -51,29 +108,45 @@ const ProfilePage = () => {
       <main className="flex flex-col items-center justify-start px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-6xl bg-white shadow-xl rounded-2xl p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar */}
-          <aside className="md:col-span-1 border-r border-rose-100 pr-4">
+          <aside className="md:col-span-1 border-r border-rose-100 pr-4 ">
             <ul className="space-y-4 text-gray-700 font-medium flex flex-col justify-between h-full">
               <div className="flex flex-col gap-4">
                 <li
                   onClick={() => setActiveTab("profile")}
-                  className={`text-center  rounded-lg px-3 py-2 cursor-pointer transition ${
+                  className={`text-center flex items-center  gap-2  rounded-lg px-3 py-2 cursor-pointer transition ${
                     activeTab === "profile"
                       ? "bg-rose-500 text-white font-semibold "
                       : "hover:bg-rose-100 bg-rose-50 text-rose-600 "
                   }`}
                 >
+                  <UserPen width={20} />
                   My Profile
                 </li>
                 <li
                   onClick={() => setActiveTab("security")}
-                  className={`text-center  rounded-lg px-3 py-2 cursor-pointer transition ${
+                  className={`text-center  flex items-center  gap-2  rounded-lg px-3 py-2 cursor-pointer transition ${
                     activeTab === "security"
                       ? "bg-rose-500 text-white font-semibold"
                       : "hover:bg-rose-100 bg-rose-50 text-rose-600"
                   }`}
                 >
+                  <LockKeyhole width={20} />
                   Security
                 </li>
+
+                {!userData.isAccountVerified && (
+                  <li
+                    onClick={() => setActiveTab("emailVerify")}
+                    className={`text-center  flex items-center  gap-2  rounded-lg px-3 py-2 cursor-pointer transition ${
+                      activeTab === "emailVerify"
+                        ? "bg-rose-500 text-white font-semibold"
+                        : "hover:bg-rose-100 bg-rose-50 text-rose-600"
+                    }`}
+                  >
+                    <MailWarning width={20} />
+                    Email Verify
+                  </li>
+                )}
               </div>
               <li
                 onClick={() => setShowLogoutConfirm(true)}
@@ -89,39 +162,42 @@ const ProfilePage = () => {
             {activeTab === "profile" && (
               <div className="grid gap-6">
                 {/* 🔐 Verification Status Card */}
-                <div
-                  className={`rounded-xl px-6 py-2 shadow-sm border ${
-                    userData?.isAccountVerified
-                      ? "bg-green-50 border-green-200"
-                      : "bg-yellow-50 border-yellow-200"
-                  }`}
-                >
-                  <h3
-                    className={`text-lg font-semibold mb-2 flex items-center gap-2 ${
+                {!userData.isAccountVerified && (
+                  <div
+                    className={`rounded-xl px-6 py-2 shadow-sm border ${
                       userData?.isAccountVerified
-                        ? "text-green-700"
-                        : "text-yellow-700"
+                        ? "bg-green-50 border-green-200"
+                        : "bg-yellow-50 border-yellow-200"
                     }`}
                   >
-                    <InfoIcon />
-                    Verification Status
-                  </h3>
-                  <p
-                    className={`text-sm ${
-                      userData?.isAccountVerified
-                        ? "text-green-600"
-                        : "text-yellow-700"
-                    }`}
-                  >
-                    {userData?.isAccountVerified
-                      ? "Your email has been successfully verified."
-                      : "Your email is not verified. Please check your inbox for a verification email or request a new one."}
-                  </p>
-                </div>
+                    <h3
+                      className={`text-lg font-semibold mb-2 flex items-center gap-2 ${
+                        userData?.isAccountVerified
+                          ? "text-green-700"
+                          : "text-yellow-700"
+                      }`}
+                    >
+                      <InfoIcon />
+                      Verification Status
+                    </h3>
+                    <p
+                      className={`text-sm ${
+                        userData?.isAccountVerified
+                          ? "text-green-600"
+                          : "text-yellow-700"
+                      }`}
+                    >
+                      {userData?.isAccountVerified
+                        ? "Your email has been successfully verified."
+                        : "Your email is not verified. Please check your inbox for a verification email or request a new one."}
+                    </p>
+                  </div>
+                )}
 
                 {/* 🧍 Personal Details */}
                 <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
-                  <h3 className="text-lg font-semibold text-rose-600 mb-4">
+                  <h3 className="text-lg flex items-center gap-1 font-semibold text-rose-600 mb-4">
+                    <User2Icon />
                     Personal Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -134,11 +210,21 @@ const ProfilePage = () => {
                       </p>
                     </div>
                     <div>
-                      <label className="block text-gray-500 text-sm">
+                      <label className=" text-gray-500 text-sm flex items-center gap-2">
                         Email
+                        {userData.isAccountVerified === false ? (
+                          <span className="text-[10px] border-yellow-200 border flex items-center gap-1 rounded-full px-2 text-red-600 bg-yellow-100" >
+                            <InfoIcon width={10} />
+                            verify email
+                          </span>
+                        ) : (
+                          <span className="text-[10px]  flex items-center gap-1 rounded-full px-2  text-green-600 bg-green-100">
+                            <MailCheck width={13} />
+                          </span>
+                        )}
                       </label>
-                      <p className="text-base font-semibold text-gray-900">
-                        {userData?.email || "N/A"}
+                      <p className="text-base font-semibold flex items-center gap-2 text-gray-900">
+                        <span> {userData?.email || "N/A"} </span>
                       </p>
                     </div>
                     <div>
@@ -170,7 +256,8 @@ const ProfilePage = () => {
 
                 {/* 🌍 Location Details */}
                 <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
-                  <h3 className="text-lg font-semibold text-rose-600 mb-4">
+                  <h3 className="text-lg flex items-center gap-1 font-semibold text-rose-600 mb-4">
+                    <MapPinCheck />
                     Location Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -253,6 +340,62 @@ const ProfilePage = () => {
                 <button className="self-start bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 transition">
                   Update Password
                 </button>
+              </div>
+            )}
+
+            {activeTab === "emailVerify" && (
+              <div className="bg-slate-100 p-6 rounded-xl flex flex-col gap-6 max-w-md">
+                <h3 className="text-xl font-semibold text-rose-600">
+                  Verify your Email
+                </h3>
+
+                {/* Display Email */}
+                <div>
+                  <label className="block text-gray-600 text-sm mb-1">
+                    Your Email
+                  </label>
+                  <input
+                    type="email"
+                    value={userData?.email}
+                    disabled
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                  />
+                </div>
+
+                {/* Send OTP Button */}
+                {!showOtpField && (
+                  <button
+                    onClick={handleSendOtp}
+                    className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 font-medium transition cursor-pointer"
+                  >
+                    Send OTP
+                  </button>
+                )}
+
+                {/* OTP Input + Verify Button */}
+                {showOtpField && (
+                  <>
+                    <div>
+                      <label className="block text-gray-600 text-sm mb-1">
+                        Enter OTP
+                      </label>
+                      <input
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300"
+                        placeholder="Enter the 6 digit OTP sent to your email"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleVerifyOtp}
+                      className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 cursor-pointer font-medium transition"
+                    >
+                      Verify OTP
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </section>
