@@ -2,13 +2,31 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from "../Components/NavigationBar";
 import { AppContext } from "../Context/appContext";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { ArrowLeft, InfoIcon, LogOut } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
-  const { userData } = useContext(AppContext);
+  const { userData, backendUrl, setUserData , setIsLoggedIn } = useContext(AppContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.post(backendUrl + "/api/auth/logout"); 
+
+      if (data.success) {
+        toast.success("Logged Out Successfully")
+        setIsLoggedIn(false);
+        navigate('/'); 
+      } else {
+        toast.error(data.message); 
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -19,7 +37,7 @@ const ProfilePage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/")}
-            className="text-gray-600 hover:text-rose-500 transition"
+            className="text-gray-600 hover:text-rose-500 transition cursor-pointer"
             title="Go back"
           >
             <ArrowLeft size={22} />
@@ -79,12 +97,13 @@ const ProfilePage = () => {
                   }`}
                 >
                   <h3
-                    className={`text-lg font-semibold mb-2 ${
+                    className={`text-lg font-semibold mb-2 flex items-center gap-2 ${
                       userData?.isAccountVerified
                         ? "text-green-700"
                         : "text-yellow-700"
                     }`}
                   >
+                    <InfoIcon />
                     Verification Status
                   </h3>
                   <p
@@ -259,8 +278,8 @@ const ProfilePage = () => {
               </button>
               <button
                 onClick={() => {
-                  // TODO: Hook your logout function here
-                  setShowLogoutConfirm(false);
+                  handleLogout(); // ✅ actually calls the function
+                  setShowLogoutConfirm(false); // ✅ closes the popup
                 }}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
               >

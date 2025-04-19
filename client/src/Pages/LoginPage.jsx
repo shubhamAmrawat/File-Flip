@@ -54,6 +54,7 @@ const LoginPage = () => {
 
         if (data.success) {
           setIsLoggedIn(true);
+          getUserData();
           navigate("/");
         } else {
           toast.error(data.message);
