@@ -62,9 +62,9 @@ const NavigationBar = () => {
 
       if (data.success) {
         toast.success(data.message);
-
         setIsLoggedIn(false);
         setUserData(false);
+        navigate('/')
       } else {
         toast.error(data.message);
       }
