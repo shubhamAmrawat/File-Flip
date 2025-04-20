@@ -372,3 +372,15 @@ export const verifyResetOtp = async (req, res) => {
     return res.json({ success: false, message: `Error in verifyResetOtp controller ${error.message}` })
   }
 }
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, otp } = req.body; 
+
+    if (!currentPassword || !newPassword || !otp) return res.json({ success: false, message: `Details missing` });
+
+   
+  } catch (error) {
+    
+  }
+}

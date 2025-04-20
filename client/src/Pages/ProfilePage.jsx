@@ -5,23 +5,17 @@ import { AppContext } from "../Context/appContext";
 import {
   ArrowLeft,
   InfoIcon,
-  Locate,
-  LocateIcon,
-  LockIcon,
   LockKeyhole,
   LogOut,
   MailCheck,
   MailWarning,
-  Map,
   MapPinCheck,
-  PersonStanding,
-  User,
-  User2,
   User2Icon,
   UserPen,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Footer from "../Components/Footer";
 
 const ProfilePage = () => {
   const { userData, backendUrl, setIsLoggedIn } = useContext(AppContext);
@@ -86,7 +80,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className=" flex flex-col   min-h-screen  ">
       <NavigationBar />
 
       {/* Header */}
@@ -105,7 +99,7 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <main className="flex flex-col items-center justify-start px-4 sm:px-6 lg:px-8">
+      <main className="flex flex-col flex-grow items-center justify-start px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-6xl bg-white shadow-xl rounded-2xl p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar */}
           <aside className="md:col-span-1 border-r border-rose-100 pr-4 ">
@@ -150,7 +144,7 @@ const ProfilePage = () => {
               </div>
               <li
                 onClick={() => setShowLogoutConfirm(true)}
-                className="flex items-center justify-center gap-2 hover:bg-red-100 text-red-600 hover:text-red-800 px-3 py-2 rounded-lg cursor-pointer transition"
+                className="flex items-center justify-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-600 px-3 py-2 rounded-lg cursor-pointer transition"
               >
                 <LogOut size={18} /> Logout
               </li>
@@ -196,8 +190,8 @@ const ProfilePage = () => {
 
                 {/* 🧍 Personal Details */}
                 <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
-                  <h3 className="text-lg flex items-center gap-1 font-semibold text-rose-600 mb-4">
-                    <User2Icon />
+                  <h3 className="text-lg flex items-center  gap-1 font-semibold text-rose-600 mb-4">
+                    <User2Icon width={20} />
                     Personal Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -213,7 +207,7 @@ const ProfilePage = () => {
                       <label className=" text-gray-500 text-sm flex items-center gap-2">
                         Email
                         {userData.isAccountVerified === false ? (
-                          <span className="text-[10px] border-yellow-200 border flex items-center gap-1 rounded-full px-2 text-red-600 bg-yellow-100" >
+                          <span className="text-[10px] border-yellow-200 border flex items-center gap-1 rounded-full px-2 text-red-600 bg-yellow-100">
                             <InfoIcon width={10} />
                             verify email
                           </span>
@@ -257,7 +251,7 @@ const ProfilePage = () => {
                 {/* 🌍 Location Details */}
                 <div className="bg-slate-100 p-6 rounded-xl shadow-sm">
                   <h3 className="text-lg flex items-center gap-1 font-semibold text-rose-600 mb-4">
-                    <MapPinCheck />
+                    <MapPinCheck width={20} />
                     Location Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -415,7 +409,7 @@ const ProfilePage = () => {
             <div className="flex justify-end gap-4">
               <button
                 onClick={() => setShowLogoutConfirm(false)}
-                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -424,7 +418,7 @@ const ProfilePage = () => {
                   handleLogout(); // ✅ actually calls the function
                   setShowLogoutConfirm(false); // ✅ closes the popup
                 }}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+                className="px-4 py-2 rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition cursor-pointer"
               >
                 Logout
               </button>
@@ -432,6 +426,8 @@ const ProfilePage = () => {
           </div>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 };
