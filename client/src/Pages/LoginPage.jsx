@@ -8,6 +8,8 @@ import {  useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const LoginPage = () => {
   const [loginSwitch, setSwitch] = useState("Login");
+  // eslint-disable-next-line no-unused-vars
+  const [forgetPassToggle, setForgetPassToggle] = useState(false); 
   const [passVisible, setVisiblity] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -102,6 +104,8 @@ const LoginPage = () => {
         </div>
 
         {/* Form Card */}
+
+        
         <div className="border border-gray-300 rounded-md p-5 mt-5 bg-white shadow-md">
           <h2 className="font-semibold text-xl sm:text-2xl">
             {loginSwitch === "Login" ? "Login" : "Create an account"}
